@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LibraryPro Analytics Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .dashboard {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            width: 200px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px #ccc;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background: #eeeeee;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📚 Library Analytics Dashboard</h1>
+
+    <div class="dashboard">
+
+        <div class="card">
+            <h3>Total Books</h3>
+            <h2>{{ total_books }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Available Books</h3>
+            <h2>{{ available_books }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Total Reservations</h3>
+            <h2>{{ total_reservations }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Borrowed Books</h3>
+            <h2>{{ borrowed_books }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Overdue Books</h3>
+            <h2>{{ overdue_count }}</h2>
+        </div>
+
+    </div>
+
+    <h2>Overdue Book Details</h2>
+
+    {% if overdue_books %}
+
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Book</th>
+            <th>Due Date</th>
+        </tr>
+
+        {% for record in overdue_books %}
+        <tr>
+            <td>{{ record.user.username }}</td>
+            <td>{{ record.book.title }}</td>
+            <td>{{ record.due_date }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    {% else %}
+
+        <p>No overdue books 🎉</p>
+
+    {% endif %}
+
+</body>
+</html>
