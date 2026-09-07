@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Reservations - LibraryPro</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #222;
+        }
+
+        .reservation-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .reservation-card h3 {
+            margin-top: 0;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .borrow-button {
+            background-color: #16a34a;
+            color: white;
+        }
+
+        .renew-button {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📚 My Reservations</h1>
+
+    <a class="back-button" href="{% url 'book_list' %}">
+        ← Back to Book Catalog
+    </a>
+
+    {% for reservation in reservations %}
+
+        <div class="reservation-card">
+
+            <h3>{{ reservation.book.title }}</h3>
+
+            <p>
+                <strong>Author:</strong>
+                {{ reservation.book.author }}
+            </p>
+
+            <p>
+                <strong>ISBN:</strong>
+                {{ reservation.book.isbn }}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span class="status">
+                    {{ reservation.get_status_display }}
+                </span>
+            </p>
+
+            <p>
+                <strong>Reserved At:</strong>
+                {{ reservation.reserved_at }}
+            </p>
+
+            <p>
+                <strong>Due Date:</strong>
+
+                {% if reservation.due_date %}
+                    {{ reservation.due_date }}
+                {% else %}
+                    Not assigned
+                {% endif %}
+
+            </p>
+
+            <p>
+                <strong>Renewals Used:</strong>
+                {{ reservation.renewal_count }} / 2
+            </p>
+
+
+            <!-- Borrow Book -->
+            {% if reservation.status == "RESERVED" %}
+
+                <form
+                    method="post"
+                    action="{% url 'borrow_book' reservation.id %}"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="borrow-button"
+                    >
+                        Borrow Book
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+
+            <!-- Renew Book -->
+            {% if reservation.status == "BORROWED" %}
+
+                {% if reservation.renewal_count < 2 %}
+
+                    <form
+                        method="post"
+                        action="{% url 'renew_book' reservation.id %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="renew-button"
+                        >
+                            Renew Book
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <p>
+                        <strong>
+                            Maximum renewal limit reached.
+                        </strong>
+                    </p>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    {% empty %}
+
+        <p>You don't have any reservations yet.</p>
+
+    {% endfor %}
+
+</div>
+
+</body>
+
+</html>
