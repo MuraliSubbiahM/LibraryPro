@@ -1,0 +1,146 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>LibraryPro - Book Catalog</title>
+    <link rel="stylesheet" href="{% static 'catalog/style.css' %}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📚 LibraryPro</h1>
+
+    <h2>Book Catalog</h2>
+
+    {% if user.is_authenticated %}
+        <p>
+            <a href="{% url 'my_reservations' %}">
+                📖 My Reservations
+            </a>
+        </p>
+    {% endif %}
+
+    <!-- Search and Filter -->
+    <div class="search-box">
+
+        <form method="get">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="Search by title, author or ISBN"
+                value="{{ query }}"
+            >
+
+            <select name="category">
+
+                <option value="">All Categories</option>
+
+                {% for category in categories %}
+
+                    <option
+                        value="{{ category.id }}"
+                        {% if selected_category == category.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ category.name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <button type="submit">
+                Search
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Books -->
+    {% for book in books %}
+
+        <div class="book-card">
+
+            <h3>{{ book.title }}</h3>
+
+            <p>
+                <strong>Author:</strong>
+                {{ book.author }}
+            </p>
+
+            <p>
+                <strong>ISBN:</strong>
+                {{ book.isbn }}
+            </p>
+
+            <p>
+                <strong>Category:</strong>
+                {{ book.category.name }}
+            </p>
+
+            <p>
+                <strong>Total Copies:</strong>
+                {{ book.total_copies }}
+            </p>
+
+            <p class="available">
+                <strong>Available Copies:</strong>
+                {{ book.available_copies }}
+            </p>
+
+
+            <!-- Reserve Book -->
+            {% if user.is_authenticated %}
+
+                {% if book.available_copies > 0 %}
+
+                    <form
+                        method="post"
+                        action="{% url 'reserve_book' book.id %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            Reserve Book
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <p>
+                        <strong>Currently unavailable</strong>
+                    </p>
+
+                {% endif %}
+
+            {% else %}
+
+                <p>
+                    Please log in to reserve this book.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    {% empty %}
+
+        <p>No books found.</p>
+
+    {% endfor %}
+
+</div>
+
+</body>
+
+</html>
