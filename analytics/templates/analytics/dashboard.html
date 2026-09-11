@@ -7,43 +7,74 @@
         body {
             font-family: Arial, sans-serif;
             margin: 40px;
-            background-color: #f4f4f4;
+            background-color: #f4f6f8;
         }
 
         h1 {
             text-align: center;
+            margin-bottom: 30px;
         }
 
         .dashboard {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 30px;
+            justify-content: center;
+            margin-bottom: 40px;
         }
 
         .card {
             background: white;
             padding: 20px;
-            width: 200px;
-            border-radius: 8px;
+            width: 190px;
+            border-radius: 10px;
             text-align: center;
-            box-shadow: 0 2px 5px #ccc;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+        }
+
+        .card h2 {
+            font-size: 30px;
+            margin: 0;
+        }
+
+        .overdue {
+            border-top: 5px solid #d9534f;
+        }
+
+        .section {
+            margin-top: 30px;
         }
 
         table {
             width: 100%;
             background: white;
             border-collapse: collapse;
+            box-shadow: 0 2px 8px #ddd;
         }
 
         th, td {
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             text-align: center;
         }
 
         th {
             background: #eeeeee;
+        }
+
+        .danger {
+            font-weight: bold;
+        }
+
+        .success {
+            padding: 15px;
+            background: white;
+            text-align: center;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -60,13 +91,13 @@
         </div>
 
         <div class="card">
-            <h3>Available Books</h3>
-            <h2>{{ available_books }}</h2>
+            <h3>Total Copies</h3>
+            <h2>{{ total_copies }}</h2>
         </div>
 
         <div class="card">
-            <h3>Total Reservations</h3>
-            <h2>{{ total_reservations }}</h2>
+            <h3>Available Copies</h3>
+            <h2>{{ available_copies }}</h2>
         </div>
 
         <div class="card">
@@ -75,38 +106,59 @@
         </div>
 
         <div class="card">
-            <h3>Overdue Books</h3>
+            <h3>Active Reservations</h3>
+            <h2>{{ total_reservations }}</h2>
+        </div>
+
+        <div class="card overdue">
+            <h3>🚨 Overdue Books</h3>
             <h2>{{ overdue_count }}</h2>
         </div>
 
     </div>
 
-    <h2>Overdue Book Details</h2>
 
-    {% if overdue_books %}
+    <div class="section">
 
-    <table>
-        <tr>
-            <th>User</th>
-            <th>Book</th>
-            <th>Due Date</th>
-        </tr>
+        <h2>🚨 Overdue Alerts</h2>
 
-        {% for record in overdue_books %}
-        <tr>
-            <td>{{ record.user.username }}</td>
-            <td>{{ record.book.title }}</td>
-            <td>{{ record.due_date }}</td>
-        </tr>
-        {% endfor %}
+        {% if overdue_books %}
 
-    </table>
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Book</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
 
-    {% else %}
+            {% for record in overdue_books %}
 
-        <p>No overdue books 🎉</p>
+            <tr>
+                <td>{{ record.user.username }}</td>
 
-    {% endif %}
+                <td>{{ record.book.title }}</td>
+
+                <td>{{ record.due_date }}</td>
+
+                <td class="danger">
+                     OVERDUE
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <div class="success">
+            No overdue books currently.
+        </div>
+
+        {% endif %}
+
+    </div>
 
 </body>
 </html>
